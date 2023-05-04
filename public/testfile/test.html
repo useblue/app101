@@ -1,0 +1,233 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Login and Register</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="static/css/fontawesome-all.min.css">
+    <!-- Flaticon CSS -->
+    <link rel="stylesheet" href="static/css/flaticon.css">
+    <!-- Google Web Fonts -->
+    <link href="static/css/css.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <!-- Import and configure the Firebase SDK -->
+    <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+    <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+    <script src="/__/firebase/9.21.0/firebase-app-compat.js"></script>
+    <script src="/__/firebase/9.21.0/firebase-auth-compat.js"></script>
+    <script src="/__/firebase/init.js"></script>
+  
+    <script type="text/javascript">
+  
+      /**
+       * Handles the sign in button press.
+       */
+      function toggleSignIn() {
+        if (firebase.auth().currentUser) {
+          firebase.auth().signOut();
+        } else {
+          var email = document.getElementById('email').value;
+          var password = document.getElementById('password').value;
+          if (email.length < 4) {
+            alert('Please enter an email address.');
+            return;
+          }
+          if (password.length < 4) {
+            alert('Please enter a password.');
+            return;
+          }
+          // Sign in with email and pass.
+          firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode === 'auth/wrong-password') {
+              alert('Wrong password.');
+            } else {
+              alert(errorMessage);
+            }
+            console.log(error);
+            document.getElementById('quickstart-sign-in').disabled = false;
+          });
+        }
+        document.getElementById('quickstart-sign-in').disabled = true;
+      }
+  
+      /**
+       * Handles the sign up button press.
+       */
+      function handleSignUp() {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        if (email.length < 4) {
+          alert('Please enter an email address.');
+          return;
+        }
+        if (password.length < 4) {
+          alert('Please enter a password.');
+          return;
+        }
+        // Create user with email and pass.
+        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          if (errorCode == 'auth/weak-password') {
+            alert('The password is too weak.');
+          } else {
+            alert(errorMessage);
+          }
+          console.log(error);
+        });
+      }
+  
+      /**
+       * Sends an email verification to the user.
+       */
+      function sendEmailVerification() {
+        firebase.auth().currentUser.sendEmailVerification().then(function() {
+          // Email Verification sent!
+          alert('Email Verification Sent!');
+        });
+      }
+  
+      function sendPasswordReset() {
+        var email = document.getElementById('email').value;
+        firebase.auth().sendPasswordResetEmail(email).then(function() {
+          // Password Reset Email Sent!
+          alert('Password Reset Email Sent!');
+        }).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          if (errorCode == 'auth/invalid-email') {
+            alert(errorMessage);
+          } else if (errorCode == 'auth/user-not-found') {
+            alert(errorMessage);
+          }
+          console.log(error);
+        });
+      }
+  
+      /**
+       * initApp handles setting up UI event listeners and registering Firebase auth listeners:
+       *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
+       *    out, and that is where we update the UI.
+       */
+      function initApp() {
+        // Listening for auth state changes.
+        firebase.auth().onAuthStateChanged(function(user) {
+          document.getElementById('quickstart-verify-email').disabled = true;
+          if (user) {
+            // User is signed in.
+            var displayName = user.displayName;
+            var email = user.email;
+            var emailVerified = user.emailVerified;
+            var photoURL = user.photoURL;
+            var isAnonymous = user.isAnonymous;
+            var uid = user.uid;
+            var providerData = user.providerData;
+            document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+            document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+            document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+            if (!emailVerified) {
+              document.getElementById('quickstart-verify-email').disabled = false;
+            }
+          } else {
+            // User is signed out.
+            document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
+            document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+            document.getElementById('quickstart-account-details').textContent = 'null';
+          }
+          document.getElementById('quickstart-sign-in').disabled = false;
+        });
+  
+        document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+        document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUp, false);
+        document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
+        document.getElementById('quickstart-password-reset').addEventListener('click', sendPasswordReset, false);
+      }
+  
+      window.onload = function() {
+        initApp();
+      };
+    </script>
+</head>
+<body>
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <div id="preloader" class="preloader">
+        <div class='inner'>
+            <div class='line1'></div>
+            <div class='line2'></div>
+            <div class='line3'></div>
+        </div>
+    </div>
+    <section class="fxt-template-animation fxt-template-layout33">
+        <div class="fxt-content-wrap">
+            <div class="fxt-heading-content">
+                <div class="fxt-inner-wrap fxt-transformX-R-50 fxt-transition-delay-3">
+                    <div class="fxt-transformX-R-50 fxt-transition-delay-10">
+                        <a href="" class="fxt-logo"><img src="static/picture/logo.png" alt="Logo"></a>
+                    </div>
+                    <div class="fxt-transformX-R-50 fxt-transition-delay-10">
+                        <div class="fxt-middle-content">
+                            <div class="fxt-sub-title">Welcome to</div>
+                            <h1 class="fxt-main-title">APP.SRTO.WIN</h1>
+                            <p class="fxt-description">We are glad to see you again! Get access to your Orders, Wishlist and Recommendations.</p>
+                        </div>
+                    </div>
+                    <div class="fxt-transformX-R-50 fxt-transition-delay-10">
+                        <div class="fxt-switcher-description">Don't have an account?<a href="register.html" class="fxt-switcher-text">Register</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fxt-form-content">
+                <div class="fxt-main-form">
+                    <div class="fxt-inner-wrap fxt-opacity fxt-transition-delay-13">
+                        <h2 class="fxt-page-title">Log In</h2>
+                        <p class="fxt-description">Log In to try</p>
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="email" class="fxt-label">Email Address</label>
+                                <input type="email" id="email" class="form-control" name="email" placeholder="Enter your email" required="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="fxt-label">Password</label>
+                                <input id="password" type="password" class="form-control" name="password" placeholder="Enter Password" required="required">
+                            </div>
+                            <div class="form-group">
+                                <a href="forgot-password.html" class="fxt-switcher-text">Forgot Password</a>
+                            </div>
+                            <div class="form-group mb-3">
+                                <button type="submit" class="fxt-btn-fill">Log in</button>
+                                <button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign In</button>
+                            </div>
+                        </form>
+                        <div class="fxt-divider-text">OR</div>
+                        <!-- Container where we'll display the user details -->
+                        <div class="quickstart-user-details-container">
+                            Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
+                            <div>Firebase auth <code>currentUser</code> object value:</div>
+                            <pre><code id="quickstart-account-details">null</code></pre>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="static/js/jquery-3.5.0.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/imagesloaded.pkgd.min.js"></script>
+    <script src="static/js/validator.min.js"></script>
+    <script src="static/js/main.js"></script>
+
+</body>
+
+</html>
