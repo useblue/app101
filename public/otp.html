@@ -1,6 +1,5 @@
 <!doctype html>
 <html class="no-js" lang="">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -17,8 +16,40 @@
     <link href="static/css/css.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="static/css/style.css">
+    <script src="/__/firebase/9.21.0/firebase-app-compat.js"></script>
+    <script src="/__/firebase/9.21.0/firebase-auth-compat.js"></script>
+    <script src="/__/firebase/init.js"></script>
+  
+    <script type="text/javascript">
+      /**
+       * Sends an email verification to the user.
+       */
+      function sendEmailVerification() {
+        firebase.auth().currentUser.sendEmailVerification().then(function() {
+          // Email Verification sent!
+          alert('Email Verification Sent!');
+        });
+      }
+  
+      function sendPasswordReset() {
+        var email = document.getElementById('email').value;
+        firebase.auth().sendPasswordResetEmail(email).then(function() {
+          // Password Reset Email Sent!
+          alert('Password Reset Email Sent!');
+        }).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          if (errorCode == 'auth/invalid-email') {
+            alert(errorMessage);
+          } else if (errorCode == 'auth/user-not-found') {
+            alert(errorMessage);
+          }
+          console.log(error);
+        });
+      }
+    </script>
 </head>
-
 <body>
     <!--[if lt IE 8]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -63,7 +94,7 @@
                                 <input type="text" class="fxt-otp-col otp-input form-control" maxlength="1" required="required">
                             </div>
                             <div class="fxt-otp-btn">
-                                <button type="submit" class="fxt-btn-fill">Verify</button>
+                                <button type="submit" class="fxt-btn-fill" disabled id="quickstart-verify-email" name="verify-email">Verify</button>
                             </div>
                         </form>
                         <div class="fxt-switcher-description">Not received your code?<button class="fxt-switcher-text ms-1" type="submit">Resend code</button><span class="ms-1">or</span><button class="fxt-switcher-text ms-1" type="submit">Call</button></div>
@@ -77,19 +108,5 @@
     <script src="static/js/imagesloaded.pkgd.min.js"></script>
     <script src="static/js/validator.min.js"></script>
     <script src="static/js/main.js"></script>
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/9.21.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/9.21.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/9.21.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/9.21.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/9.21.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
 </body>
-
 </html>
