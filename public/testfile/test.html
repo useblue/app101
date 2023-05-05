@@ -1,20 +1,21 @@
 <!doctype html>
 <html class="no-js" lang="">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Login and Register</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="static/picture/logo.png">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
     <!-- Fontawesome CSS -->
     <link rel="stylesheet" href="static/css/fontawesome-all.min.css">
     <!-- Flaticon CSS -->
-    <link rel="stylesheet" href="static/css/flaticon.css">
+    <link rel="stylesheet" href="static/font/flaticon.css">
     <!-- Google Web Fonts -->
-    <link href="static/css/css.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="static/css/style.css">
     <script src="/__/firebase/9.21.0/firebase-app-compat.js"></script>
@@ -54,6 +55,62 @@
             });
           }
           document.getElementById('quickstart-sign-in').disabled = true;
+        }
+    
+        /**
+         * Handles the sign up button press.
+         */
+        function handleSignUp() {
+          var email = document.getElementById('email').value;
+          var password = document.getElementById('password').value;
+          if (email.length < 4) {
+            alert('Please enter an email address.');
+            return;
+          }
+          if (password.length < 4) {
+            alert('Please enter a password.');
+            return;
+          }
+          // Create user with email and pass.
+          firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode == 'auth/weak-password') {
+              alert('The password is too weak.');
+            } else {
+              alert(errorMessage);
+            }
+            console.log(error);
+          });
+        }
+    
+        /**
+         * Sends an email verification to the user.
+         */
+        function sendEmailVerification() {
+          firebase.auth().currentUser.sendEmailVerification().then(function() {
+            // Email Verification sent!
+            alert('Email Verification Sent!');
+          });
+        }
+    
+        function sendPasswordReset() {
+          var email = document.getElementById('email').value;
+          firebase.auth().sendPasswordResetEmail(email).then(function() {
+            // Password Reset Email Sent!
+            alert('Password Reset Email Sent!');
+          }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode == 'auth/invalid-email') {
+              alert(errorMessage);
+            } else if (errorCode == 'auth/user-not-found') {
+              alert(errorMessage);
+            }
+            console.log(error);
+          });
         }
     
         /**
@@ -99,10 +156,7 @@
           initApp();
         };
       </script>
-    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
 </head>
-
 <body>
     <!--[if lt IE 8]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -114,7 +168,7 @@
             <div class='line3'></div>
         </div>
     </div>
-    <section class="fxt-template-animation fxt-template-layout33">
+    <section class="fxt-template-animation fxt-template-layout">
         <div class="fxt-content-wrap">
             <div class="fxt-heading-content">
                 <div class="fxt-inner-wrap fxt-transformX-R-50 fxt-transition-delay-3">
@@ -138,10 +192,10 @@
                     <div class="fxt-inner-wrap fxt-opacity fxt-transition-delay-13">
                         <h2 class="fxt-page-title">Log In</h2>
                         <p class="fxt-description">Log In to try</p>
-
+                        <form>
                             <div class="form-group">
                                 <label for="email" class="fxt-label">Email Address</label>
-                                <input type="text" id="email" class="form-control" name="email" placeholder="Enter your email" required="required">
+                                <input type="email" id="email" class="form-control" name="email" placeholder="Enter your email" required="required">
                             </div>
                             <div class="form-group">
                                 <label for="password" class="fxt-label">Password</label>
@@ -151,15 +205,31 @@
                                 <a href="forgot-password.html" class="fxt-switcher-text">Forgot Password</a>
                             </div>
                             <div class="form-group mb-3">
-                                <button id="quickstart-sign-up" name="signup" class="fxt-btn-fill">Log in</button>
+                                <button type="submit" class="fxt-btn-fill" id="quickstart-sign-in" name="signin">Log in</button>
                             </div>
-
+                        </form>
                         <div class="fxt-divider-text">OR</div>
-                        <!-- Container where we'll display the user details -->
-                        <div class="quickstart-user-details-container">
-                            Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
-                            <div>Firebase auth <code>currentUser</code> object value:</div>
-                            <pre><code id="quickstart-account-details">null</code></pre>
+                        <div id="fxt-login-option" class="fxt-login-option">
+                            <ul>
+                                <li class="fxt-google active">
+                                    <a href="#">
+                                        <span class="fxt-option-icon"><i class="fab fa-google"></i></span>
+                                        <span class="fxt-option-text ml-2">Continue with Google</span>
+                                    </a>
+                                </li>
+                                <li class="fxt-facebook">
+                                    <a href="#">
+                                        <span class="fxt-option-icon"><i class="fab fa-facebook-f"></i></span>
+                                        <span class="fxt-option-text ml-2">Continue with Facebook</span>
+                                    </a>
+                                </li>
+                                <li class="fxt-apple">
+                                    <a href="#">
+                                        <span class="fxt-option-icon"><i class="fab fa-apple"></i></span>
+                                        <span class="fxt-option-text ml-2">Continue with Apple</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -170,7 +240,5 @@
     <script src="static/js/bootstrap.min.js"></script>
     <script src="static/js/imagesloaded.pkgd.min.js"></script>
     <script src="static/js/validator.min.js"></script>
-    <script src="static/js/main.js"></script>
 </body>
-
 </html>
